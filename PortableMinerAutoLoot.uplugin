@@ -1,0 +1,29 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0.0",
+	"SemVersion": "1.0.0",
+	"GameVersion": ">=520140",
+	"FriendlyName": "Portable Miner Auto-Loot",
+	"Description": "Automatically collects the ore from full Portable Miners near you. Configurable range.",
+	"Category": "Modding",
+	"CreatedBy": "Aetherosz",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "PortableMinerAutoLoot",
+			"Type": "Runtime",
+			"LoadingPhase": "PostDefault"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "SML",
+			"Enabled": true,
+			"SemVersion": "^3.12.1"
+		}
+	]
+}
