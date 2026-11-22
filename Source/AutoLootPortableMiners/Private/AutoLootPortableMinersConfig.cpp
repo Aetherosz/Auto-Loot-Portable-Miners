@@ -26,7 +26,7 @@ UAutoLootPortableMinersConfig::UAutoLootPortableMinersConfig()
 	ConfigId = GetId();
 	DisplayName = LOCTEXT("ConfigName", "Auto-Loot Portable Miners");
 	Description = LOCTEXT("ConfigDescription",
-		"Automatically collects the ore from full Portable Miners near you. Changes apply right away. In multiplayer the host's settings count.");
+		"Automatically collects the ore from full Portable Miners near you. Changes apply right away. Multiplayer is untested: it should work, with the host's settings being the ones that count.");
 
 	RootSection = CreateDefaultSubobject<UConfigPropertySection>(TEXT("RootSection"));
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -12,7 +12,7 @@ class UWorld;
 
 /**
  * Empties full Portable Miners near players into the player's inventory. Runs on the server
- * (single player, host or dedicated server), so in multiplayer only the host's settings count.
+ * (single player, host or dedicated server), so in multiplayer only the host's settings should count (multiplayer is untested).
  */
 class FAutoLootPortableMiners
 {

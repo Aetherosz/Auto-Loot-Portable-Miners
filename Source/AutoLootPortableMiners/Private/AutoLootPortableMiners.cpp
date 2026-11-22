@@ -252,7 +252,7 @@ void FAutoLootPortableMiners::UpdateStatus(EMenuMode Mode)
 		SetStatusText(TEXT("Load a save to see the status."));
 		return;
 	case EMenuMode::Client:
-		SetStatusText(TEXT("Multiplayer: the host's settings are used."));
+		SetStatusText(TEXT("Multiplayer is untested. The host's settings should be the ones that count."));
 		return;
 	case EMenuMode::InSave:
 		break;
