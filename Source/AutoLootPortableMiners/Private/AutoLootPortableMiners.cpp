@@ -1,6 +1,6 @@
-#include "PortableMinerAutoLoot.h"
+#include "AutoLootPortableMiners.h"
 
-#include "PortableMinerAutoLootConfig.h"
+#include "AutoLootPortableMinersConfig.h"
 
 #include "Configuration/ConfigManager.h"
 #include "Configuration/Properties/ConfigPropertyBool.h"
@@ -15,21 +15,21 @@
 #include "Patching/NativeHookManager.h"
 #include "TimerManager.h"
 
-DEFINE_LOG_CATEGORY_STATIC(LogPortableMinerAutoLoot, Log, All);
+DEFINE_LOG_CATEGORY_STATIC(LogAutoLootPortableMiners, Log, All);
 
-TWeakObjectPtr<UConfigManager> FPortableMinerAutoLoot::ConfigManager;
-TWeakObjectPtr<UWorld> FPortableMinerAutoLoot::ScannedWorld;
+TWeakObjectPtr<UConfigManager> FAutoLootPortableMiners::ConfigManager;
+TWeakObjectPtr<UWorld> FAutoLootPortableMiners::ScannedWorld;
 
 // ---------------------------------------------------------------------------
 // Hooks
 // ---------------------------------------------------------------------------
 
-void FPortableMinerAutoLoot::RegisterHooks()
+void FAutoLootPortableMiners::RegisterHooks()
 {
 	// Register the mod config as soon as the game instance exists, so it is
 	// listed in the main menu's Mods -> Mod Configuration before any save loads.
-	FWorldDelegates::OnStartGameInstance.AddStatic(&FPortableMinerAutoLoot::RegisterConfig);
-	FWorldDelegates::OnWorldCleanup.AddStatic(&FPortableMinerAutoLoot::OnWorldCleanup);
+	FWorldDelegates::OnStartGameInstance.AddStatic(&FAutoLootPortableMiners::RegisterConfig);
+	FWorldDelegates::OnWorldCleanup.AddStatic(&FAutoLootPortableMiners::OnWorldCleanup);
 
 #if !WITH_EDITOR
 	// Write config changes right away. SML otherwise saves on a timer that doesn't run while the
@@ -38,7 +38,7 @@ void FPortableMinerAutoLoot::RegisterHooks()
 	SUBSCRIBE_METHOD_AFTER(UConfigManager::MarkConfigurationDirty,
 		[](UConfigManager* Self, const FConfigId& Id)
 		{
-			if (Id == UPortableMinerAutoLootConfig::GetId())
+			if (Id == UAutoLootPortableMinersConfig::GetId())
 			{
 				Self->FlushPendingSaves();
 				// The scan timer is paused with the game, so refresh the status line here too.
@@ -81,7 +81,7 @@ void FPortableMinerAutoLoot::RegisterHooks()
 #endif
 }
 
-void FPortableMinerAutoLoot::OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources)
+void FAutoLootPortableMiners::OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources)
 {
 	if (!World || !World->IsGameWorld())
 	{
@@ -98,7 +98,7 @@ void FPortableMinerAutoLoot::OnWorldCleanup(UWorld* World, bool bSessionEnded, b
 // Scanning
 // ---------------------------------------------------------------------------
 
-void FPortableMinerAutoLoot::Scan(UWorld* World)
+void FAutoLootPortableMiners::Scan(UWorld* World)
 {
 	if (!World || World->GetNetMode() == NM_Client)
 	{
@@ -106,7 +106,7 @@ void FPortableMinerAutoLoot::Scan(UWorld* World)
 	}
 	UpdateStatus(EMenuMode::InSave);
 
-	if (!GetConfigBool(UPortableMinerAutoLootConfig::EnabledKey, true))
+	if (!GetConfigBool(UAutoLootPortableMinersConfig::EnabledKey, true))
 	{
 		return;
 	}
@@ -147,7 +147,7 @@ void FPortableMinerAutoLoot::Scan(UWorld* World)
 	}
 }
 
-bool FPortableMinerAutoLoot::IsFull(const UFGInventoryComponent* Inventory)
+bool FAutoLootPortableMiners::IsFull(const UFGInventoryComponent* Inventory)
 {
 	if (!Inventory || Inventory->GetSizeLinear() <= 0)
 	{
@@ -167,7 +167,7 @@ bool FPortableMinerAutoLoot::IsFull(const UFGInventoryComponent* Inventory)
 	return true;
 }
 
-bool FPortableMinerAutoLoot::Collect(AFGPortableMiner* Miner, AFGCharacterPlayer* Player)
+bool FAutoLootPortableMiners::Collect(AFGPortableMiner* Miner, AFGCharacterPlayer* Player)
 {
 	UFGInventoryComponent* From = Miner->GetOutputInventory();
 	UFGInventoryComponent* To = Player->GetInventory();
@@ -183,7 +183,7 @@ bool FPortableMinerAutoLoot::Collect(AFGPortableMiner* Miner, AFGCharacterPlayer
 	}
 	To->AddStacks(Stacks);
 	From->Empty();
-	UE_LOG(LogPortableMinerAutoLoot, Verbose, TEXT("Collected %d stack(s) from %s"), Stacks.Num(), *Miner->GetName());
+	UE_LOG(LogAutoLootPortableMiners, Verbose, TEXT("Collected %d stack(s) from %s"), Stacks.Num(), *Miner->GetName());
 	return true;
 }
 
@@ -191,7 +191,7 @@ bool FPortableMinerAutoLoot::Collect(AFGPortableMiner* Miner, AFGCharacterPlayer
 // Mod config
 // ---------------------------------------------------------------------------
 
-void FPortableMinerAutoLoot::RegisterConfig(UGameInstance* GameInstance)
+void FAutoLootPortableMiners::RegisterConfig(UGameInstance* GameInstance)
 {
 	if (!GameInstance || ConfigManager.IsValid())
 	{
@@ -200,51 +200,51 @@ void FPortableMinerAutoLoot::RegisterConfig(UGameInstance* GameInstance)
 	UConfigManager* Manager = GameInstance->GetSubsystem<UConfigManager>();
 	if (!Manager)
 	{
-		UE_LOG(LogPortableMinerAutoLoot, Error, TEXT("SML config manager not found; using default settings"));
+		UE_LOG(LogAutoLootPortableMiners, Error, TEXT("SML config manager not found; using default settings"));
 		return;
 	}
-	UPortableMinerAutoLootConfig::UseMenuWidgets();
-	Manager->RegisterModConfiguration(UPortableMinerAutoLootConfig::StaticClass());
+	UAutoLootPortableMinersConfig::UseMenuWidgets();
+	Manager->RegisterModConfiguration(UAutoLootPortableMinersConfig::StaticClass());
 	ConfigManager = Manager;
 	UpdateStatus(EMenuMode::MainMenu);
 }
 
-UConfigProperty* FPortableMinerAutoLoot::GetConfigProperty(const FString& Key)
+UConfigProperty* FAutoLootPortableMiners::GetConfigProperty(const FString& Key)
 {
 	UConfigManager* Manager = ConfigManager.Get();
-	UConfigPropertySection* Root = Manager ? Manager->GetConfigurationRootSection(UPortableMinerAutoLootConfig::GetId()) : nullptr;
+	UConfigPropertySection* Root = Manager ? Manager->GetConfigurationRootSection(UAutoLootPortableMinersConfig::GetId()) : nullptr;
 	const TObjectPtr<UConfigProperty>* Property = Root ? Root->SectionProperties.Find(Key) : nullptr;
 	return Property ? Property->Get() : nullptr;
 }
 
-int32 FPortableMinerAutoLoot::GetConfigInt(const FString& Key, int32 Fallback)
+int32 FAutoLootPortableMiners::GetConfigInt(const FString& Key, int32 Fallback)
 {
 	const UConfigPropertyInteger* Property = Cast<UConfigPropertyInteger>(GetConfigProperty(Key));
 	return Property ? Property->Value : Fallback;
 }
 
-bool FPortableMinerAutoLoot::GetConfigBool(const FString& Key, bool bFallback)
+bool FAutoLootPortableMiners::GetConfigBool(const FString& Key, bool bFallback)
 {
 	const UConfigPropertyBool* Property = Cast<UConfigPropertyBool>(GetConfigProperty(Key));
 	return Property ? Property->Value : bFallback;
 }
 
-int32 FPortableMinerAutoLoot::GetRangeMeters()
+int32 FAutoLootPortableMiners::GetRangeMeters()
 {
-	return FMath::Clamp(GetConfigInt(UPortableMinerAutoLootConfig::RangeKey, UPortableMinerAutoLootConfig::DefaultRange),
-		UPortableMinerAutoLootConfig::MinRange, UPortableMinerAutoLootConfig::MaxRange);
+	return FMath::Clamp(GetConfigInt(UAutoLootPortableMinersConfig::RangeKey, UAutoLootPortableMinersConfig::DefaultRange),
+		UAutoLootPortableMinersConfig::MinRange, UAutoLootPortableMinersConfig::MaxRange);
 }
 
-void FPortableMinerAutoLoot::SetStatusText(const FString& Text)
+void FAutoLootPortableMiners::SetStatusText(const FString& Text)
 {
-	// The label (UPortableMinerAutoLootLabel) redraws its DisplayName every frame.
-	if (UConfigProperty* Status = GetConfigProperty(UPortableMinerAutoLootConfig::StatusKey))
+	// The label (UAutoLootPortableMinersLabel) redraws its DisplayName every frame.
+	if (UConfigProperty* Status = GetConfigProperty(UAutoLootPortableMinersConfig::StatusKey))
 	{
 		Status->DisplayName = FText::FromString(Text);
 	}
 }
 
-void FPortableMinerAutoLoot::UpdateStatus(EMenuMode Mode)
+void FAutoLootPortableMiners::UpdateStatus(EMenuMode Mode)
 {
 	switch (Mode)
 	{
@@ -258,7 +258,7 @@ void FPortableMinerAutoLoot::UpdateStatus(EMenuMode Mode)
 		break;
 	}
 
-	if (!GetConfigBool(UPortableMinerAutoLootConfig::EnabledKey, true))
+	if (!GetConfigBool(UAutoLootPortableMinersConfig::EnabledKey, true))
 	{
 		SetStatusText(TEXT("Off."));
 	}

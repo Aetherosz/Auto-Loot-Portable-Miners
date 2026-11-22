@@ -2,19 +2,19 @@
 
 #include "CoreMinimal.h"
 #include "Configuration/ModConfiguration.h"
-#include "PortableMinerAutoLootConfig.generated.h"
+#include "AutoLootPortableMinersConfig.generated.h"
 
 /**
  * Shows up in the game's Mods -> Mod Configuration menu (main menu and pause menu).
- * SML saves it to FactoryGame/Configs/PortableMinerAutoLoot.cfg.
+ * SML saves it to FactoryGame/Configs/AutoLootPortableMiners.cfg.
  */
 UCLASS()
-class UPortableMinerAutoLootConfig : public UModConfiguration
+class UAutoLootPortableMinersConfig : public UModConfiguration
 {
 	GENERATED_BODY()
 
 public:
-	UPortableMinerAutoLootConfig();
+	UAutoLootPortableMinersConfig();
 
 	/** Read-only line: whether auto-looting is active. */
 	static const FString StatusKey;

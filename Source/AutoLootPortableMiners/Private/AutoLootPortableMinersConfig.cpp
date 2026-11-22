@@ -1,36 +1,36 @@
-#include "PortableMinerAutoLootConfig.h"
+#include "AutoLootPortableMinersConfig.h"
 
-#include "PortableMinerAutoLootLabel.h"
+#include "AutoLootPortableMinersLabel.h"
 #include "Configuration/Properties/ConfigPropertyBool.h"
 #include "Configuration/Properties/ConfigPropertyInteger.h"
 #include "Configuration/Properties/ConfigPropertySection.h"
 #include "Configuration/Properties/WidgetExtension/CP_Integer.h"
 #include "Configuration/Properties/WidgetExtension/CP_Section.h"
 
-#define LOCTEXT_NAMESPACE "PortableMinerAutoLoot"
+#define LOCTEXT_NAMESPACE "AutoLootPortableMiners"
 
-const FString UPortableMinerAutoLootConfig::StatusKey = TEXT("Status");
-const FString UPortableMinerAutoLootConfig::EnabledKey = TEXT("Enabled");
-const FString UPortableMinerAutoLootConfig::RangeKey = TEXT("Range");
+const FString UAutoLootPortableMinersConfig::StatusKey = TEXT("Status");
+const FString UAutoLootPortableMinersConfig::EnabledKey = TEXT("Enabled");
+const FString UAutoLootPortableMinersConfig::RangeKey = TEXT("Range");
 
-FConfigId UPortableMinerAutoLootConfig::GetId()
+FConfigId UAutoLootPortableMinersConfig::GetId()
 {
 	FConfigId Id;
-	Id.ModReference = TEXT("PortableMinerAutoLoot");
+	Id.ModReference = TEXT("AutoLootPortableMiners");
 	Id.ConfigCategory = TEXT("");
 	return Id;
 }
 
-UPortableMinerAutoLootConfig::UPortableMinerAutoLootConfig()
+UAutoLootPortableMinersConfig::UAutoLootPortableMinersConfig()
 {
 	ConfigId = GetId();
-	DisplayName = LOCTEXT("ConfigName", "Portable Miner Auto-Loot");
+	DisplayName = LOCTEXT("ConfigName", "Auto-Loot Portable Miners");
 	Description = LOCTEXT("ConfigDescription",
 		"Automatically collects the ore from full Portable Miners near you. Changes apply right away. In multiplayer the host's settings count.");
 
 	RootSection = CreateDefaultSubobject<UConfigPropertySection>(TEXT("RootSection"));
 
-	UPortableMinerAutoLootLabel* Status = CreateDefaultSubobject<UPortableMinerAutoLootLabel>(TEXT("Status"));
+	UAutoLootPortableMinersLabel* Status = CreateDefaultSubobject<UAutoLootPortableMinersLabel>(TEXT("Status"));
 	Status->DisplayName = LOCTEXT("StatusMenu", "Load a save to see the status.");
 	Status->bAllowUserReset = false;
 	RootSection->SectionProperties.Add(StatusKey, Status);
@@ -76,7 +76,7 @@ namespace
 			*FString::Printf(TEXT("/SML/Interface/UI/Menu/Mods/ConfigProperties/%s.%s_C"), BlueprintName, BlueprintName));
 		if (!BlueprintClass)
 		{
-			UE_LOG(LogTemp, Error, TEXT("PortableMinerAutoLoot: %s not found, the config menu will be empty"), BlueprintName);
+			UE_LOG(LogTemp, Error, TEXT("AutoLootPortableMiners: %s not found, the config menu will be empty"), BlueprintName);
 			return Native;
 		}
 
@@ -100,8 +100,8 @@ namespace
 			{
 				// SML's default is a text box with min = max = 0. Range is the only integer here.
 				Widget->WidgetType = ECP_IntegerWidgetType::CPI_Spinbox;
-				Widget->MinValue = UPortableMinerAutoLootConfig::MinRange;
-				Widget->MaxValue = UPortableMinerAutoLootConfig::MaxRange;
+				Widget->MinValue = UAutoLootPortableMinersConfig::MinRange;
+				Widget->MaxValue = UAutoLootPortableMinersConfig::MaxRange;
 			}
 		}
 		else if (const UConfigPropertyBool* Bool = Cast<UConfigPropertyBool>(Native))
@@ -127,9 +127,9 @@ namespace
 	}
 }
 
-void UPortableMinerAutoLootConfig::UseMenuWidgets()
+void UAutoLootPortableMinersConfig::UseMenuWidgets()
 {
-	UPortableMinerAutoLootConfig* Default = GetMutableDefault<UPortableMinerAutoLootConfig>();
+	UAutoLootPortableMinersConfig* Default = GetMutableDefault<UAutoLootPortableMinersConfig>();
 	if (Default->RootSection)
 	{
 		Default->RootSection = CastChecked<UConfigPropertySection>(ToMenuProperty(Default->RootSection, Default));

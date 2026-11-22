@@ -1,16 +1,16 @@
-#include "PortableMinerAutoLootLabel.h"
+#include "AutoLootPortableMinersLabel.h"
 
 #include "Styling/CoreStyle.h"
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Text/STextBlock.h"
 
-UUserWidget* UPortableMinerAutoLootLabel::CreateEditorWidget_Implementation(UUserWidget* ParentWidget) const
+UUserWidget* UAutoLootPortableMinersLabel::CreateEditorWidget_Implementation(UUserWidget* ParentWidget) const
 {
 	if (!ParentWidget)
 	{
 		return nullptr;
 	}
-	UPortableMinerAutoLootLabelWidget* Widget = CreateWidget<UPortableMinerAutoLootLabelWidget>(ParentWidget, UPortableMinerAutoLootLabelWidget::StaticClass());
+	UAutoLootPortableMinersLabelWidget* Widget = CreateWidget<UAutoLootPortableMinersLabelWidget>(ParentWidget, UAutoLootPortableMinersLabelWidget::StaticClass());
 	if (Widget)
 	{
 		Widget->Label = this;
@@ -18,7 +18,7 @@ UUserWidget* UPortableMinerAutoLootLabel::CreateEditorWidget_Implementation(UUse
 	return Widget;
 }
 
-TSharedRef<SWidget> UPortableMinerAutoLootLabelWidget::RebuildWidget()
+TSharedRef<SWidget> UAutoLootPortableMinersLabelWidget::RebuildWidget()
 {
 	const TWeakObjectPtr<const UConfigProperty> WeakLabel = Label;
 	return SNew(SBox)

@@ -1,8 +1,8 @@
 using UnrealBuildTool;
 
-public class PortableMinerAutoLoot : ModuleRules
+public class AutoLootPortableMiners : ModuleRules
 {
-	public PortableMinerAutoLoot(ReadOnlyTargetRules Target) : base(Target)
+	public AutoLootPortableMiners(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		CppStandard = CppStandardVersion.Cpp20;
